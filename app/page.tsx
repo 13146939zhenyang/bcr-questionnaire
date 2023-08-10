@@ -1,13 +1,13 @@
 'use client'
 import React, { useEffect, FC, useState } from 'react'
-import Head from 'next/head'
-import { Button, Radio, Form, Input, message, Spin, ConfigProvider } from 'antd';
+import { Button, Radio, Form, Input, message, Spin, ConfigProvider, Checkbox } from 'antd';
+import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { BASE_URL } from '../utils/path';
 import axios from 'axios'
 import { useDebounce } from 'react-use';
 import { sendVerificationCode } from '../utils'
 import { LoadingOutlined } from '@ant-design/icons';
-import { Logo } from '../public'
+import { LogoWhite } from '../public'
 import type { RadioChangeEvent } from 'antd';
 import { preferActivities, major, experience } from '@/utils/questions'
 import { useRouter } from 'next/navigation';
@@ -15,7 +15,6 @@ import { motion } from 'framer-motion'
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin rev={undefined} />;
 const antIcon1 = <LoadingOutlined style={{ fontSize: 12 }} spin rev={undefined} />;
-
 
 const Landing = () => {
   const router = useRouter();
@@ -31,6 +30,7 @@ const Landing = () => {
   const [loading, setLoading] = useState<boolean>(false)
 
   const [selectedMajor, setSelectedMajor] = useState<string>()
+  const [haveExperience, setHaveExperience] = useState<boolean>(false)
   const [selectedExperience, setSelectedExperience] = useState<string>()
   const [selectedActivities, setSelectedActivities] = useState<string[]>([])
 
@@ -92,11 +92,15 @@ const Landing = () => {
   const onChangeMajor = (e: RadioChangeEvent) => {
     setSelectedMajor(e.target.value);
   };
+  const onChangeHaveExperience = (e: RadioChangeEvent) => {
+    setHaveExperience(e.target.value);
+  };
   const onChangeExperience = (e: RadioChangeEvent) => {
     setSelectedExperience(e.target.value);
   };
-  const onChangeActivities = (e: RadioChangeEvent) => {
-    setSelectedActivities(e.target.value);
+
+  const onChangeActivities = (checkedValues: CheckboxValueType[]) => {
+    console.log('checked = ', checkedValues);
   };
 
   return (
@@ -105,14 +109,27 @@ const Landing = () => {
         theme={{
           components: {
             Radio: {
-              colorPrimary: '#00b96b',
+              colorPrimary: '#FAD403',
               colorText: 'white',
               lineHeight: 2.3,
             },
             Checkbox: {
-              colorPrimary: '#ff4d4f',
+              colorPrimary: '#FAD403',
               colorText: 'white',
               lineHeight: 2.3,
+              borderRadiusSM: 14
+            },
+            Input: {
+              colorBgContainer: 'rgba(0, 0, 0, 0.04)',
+              colorText: 'white',
+              colorPrimaryHover: '#FAD403',
+            },
+            Button: {
+              colorBgTextHover: '#FAD403',
+              colorBgTextActive: '#FAD403',
+              colorErrorBorderHover: '#FAD403',
+              colorPrimaryBorder: '#FAD403',
+              colorPrimaryHover: '#FAD403',
             },
           },
         }}
@@ -123,24 +140,20 @@ const Landing = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           form={form}
-          className="w-[800px] mx-2 px-4 rounded-xl shadow-xl bg-white backdrop-blur-sm backdrop-filter bg-opacity-80"
+          className="w-[800px] mx-2 p-10 rounded-xl shadow-xl bg-[#070B10] backdrop-blur-sm backdrop-filter bg-opacity-40 text-white "
         >
           <div className=''>
-            <div className=''>
-              <div className=''>
-                <div className={``}>
-                  <img src={Logo.src} alt="" className='w-[140px] z-10 drop-shadow-xl' />
-                </div>
-              </div>
+            <div className='mb-5'>
+              <img src={LogoWhite.src} alt="" className='w-[140px] z-10 drop-shadow-xl' />
             </div>
-            <div className=''>
-              <div className=''>
-                <div className=''>
+            <div className='ml-2'>
+              <div className='flex flex-col gap-2 mb-2'>
+                <div className='shadow-text'>
                   <span>Full Name</span>
                 </div>
-                <Form.Item name="name" className='my-0 w-[160px]' rules={[{ required: true, message: 'Please input name!' }]}>
+                <Form.Item name="name" className='my-0' rules={[{ required: true, message: 'Please input name!' }]}>
                   <Input
-                    size='small'
+                    size='middle'
                     onChange={
                       (e: React.ChangeEvent<HTMLInputElement>) => { setName(e.target.value) }
                     }
@@ -148,8 +161,8 @@ const Landing = () => {
                   />
                 </Form.Item>
               </div>
-              <div className=''>
-                <div className=''>
+              <div className='flex flex-col gap-2 mb-2'>
+                <div className='shadow-text'>
                   <span>Email</span>
                 </div>
                 <Form.Item
@@ -176,10 +189,10 @@ const Landing = () => {
                       }
                     }
                   ]}
-                  className='w-[200px] my-0'
+                  className='my-0'
                 >
                   <Input
-                    size='small'
+                    size='middle'
                     onChange={
                       (e: React.ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }
                     }
@@ -188,11 +201,11 @@ const Landing = () => {
                 </Form.Item>
               </div>
             </div>
-            <div className=''>
-              <div className=''>
+            <div className='ml-2 flex flex-col gap-2'>
+              <div className='shadow-text'>
                 <span>Phone</span>
               </div>
-              <div className=''>
+              <div className='flex flex-col gap-2 mb-2'>
                 <div className='relative'>
                   <Form.Item
                     name="username"
@@ -218,10 +231,10 @@ const Landing = () => {
                         }
                       }
                     ]}
-                    className='w-[200px]'
+                    className='my-0'
                   >
                     <Input
-                      size='small'
+                      size='middle'
                       onChange={
                         (e: React.ChangeEvent<HTMLInputElement>) => { setUsername(e.target.value) }
                       }
@@ -231,10 +244,11 @@ const Landing = () => {
                   {username && isUsernameAvailable !== null && isUsernameAvailable === false && <div className='absolute bottom-0 text-red-500'>Phone has been registered</div>}
                   {username && isUsernameAvailable !== null && isUsernameAvailable === true && <div className='absolute bottom-0 text-green-500'>Phone is available</div>}
                 </div>
+                <div className='shadow-text'>Verification Code</div>
                 <Form.Item
                   name="verificationCode"
                   rules={[{ required: true, message: 'Please input verfication code!' }]}
-                  className="w-[140px]"
+                  className=""
                 >
                   <Input
                     addonAfter={
@@ -244,63 +258,72 @@ const Landing = () => {
                         onClick={isUsernameAvailable === true ?
                           (e) => { e.preventDefault(); handleSendVerficationCode() }
                           :
-                          (e) => { e.preventDefault(); message.warning('Please provide an available username!') }}
+                          (e) => { e.preventDefault(); message.warning('Please provide an available phone!') }}
                       >
                         {sendLoading ? <Spin indicator={antIcon1} /> :
                           (buttonLoading ? `${count} s` : 'CODE')}
                       </button>
                     }
-                    style={{ width: '100%' }}
-                    size="small"
+                    size='middle'
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputVerificationCode(e.target.value)}
                   />
                 </Form.Item>
               </div>
             </div>
-            <div className=''>
-              <div className=''>
+            <div className='ml-2'>
+              <div className='shadow-text'>
                 <span>Major:</span>
               </div>
-              <Form.Item name='edgeEvents' required className='' rules={[{ required: true, message: 'Please select!' }]}>
+              <Form.Item name='major' required className='' rules={[{ required: true, message: 'Please select!' }]}>
                 <Radio.Group onChange={onChangeMajor} value={selectedMajor}>
                   {major.map((item, index) => (
-                    <Radio key={index} value={item.value}>
+                    <Radio key={index} value={item.value} className='text-white'>
                       {item.title}
+                      <>{selectedMajor === 'other' && item.value ==='other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
                     </Radio>
                   ))}
                 </Radio.Group>
-                <>{selectedMajor === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
               </Form.Item>
             </div>
-            <div className=''>
-              <div className=''>
-                <span>Your current Trading Proficiency?</span>
+            <div className='ml-2'>
+              <div className='shadow-text'>
+                <span>Do you have investment experience?</span>
               </div>
-              <Form.Item name='tradingProficiency' required className='' rules={[{ required: true, message: 'Please select!' }]}>
-                {/* <Radio.Group options={tradingProficiency} onChange={onChangeProficiency} value={selectedTradingProficiency} /> */}
+              <Form.Item name='experience' required className='' rules={[{ required: true, message: 'Please select!' }]}>
+                <Radio.Group onChange={onChangeHaveExperience} value={haveExperience}>
+                  <Radio value={true} className='text-white'>
+                    Yes
+                  </Radio>
+                  <Radio value={false} className='text-white'>
+                    No
+                  </Radio>
+                  {haveExperience === true ? (
+                    <Form.Item name='experienceDetail' required className='' rules={[{ required: true, message: 'Please input!' }]}>
+                      <Radio.Group onChange={onChangeExperience} value={selectedExperience}>
+                        {experience.map((item, index) => (
+                          <Radio key={index} value={item.value} className='text-white'>
+                            {item.title}<>{selectedExperience === 'other' && item.value==='other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
+                          </Radio>
+                        ))}
+                      </Radio.Group>
+                    </Form.Item>
+                  ) : null}
+                </Radio.Group>
               </Form.Item>
             </div>
-            <div className=''>
-              <div className=''>
-                <span>Where did you know about us?</span>
+            <div className='ml-2'>
+              <div className='shadow-text'>
+                <span>Which types of offline activities would you like to participate in?</span>
               </div>
-              <Form.Item name='knowAboutUs' required className='' rules={[{ required: true, message: 'Please select!' }]}>
-                {/* <Radio.Group options={knowAboutUs} onChange={onChangeAboutUs} value={selectedKnowAboutUs} /> */}
+              <Form.Item name='activities' required className='' rules={[{ required: true, message: 'Please select!' }]}>
+                <Checkbox.Group options={preferActivities} onChange={onChangeActivities} className='text-white' />
               </Form.Item>
             </div>
-            <div className=''>
-              <div className=''>
-                <span>An you hope to achieve:</span>
-              </div>
-              <Form.Item name='preferActivities' required className='' rules={[{ required: true, message: 'Please select!' }]}>
-                {/* <Radio.Group options={preferActivities} onChange={onChangeAchieve} value={selectedAchieve} /> */}
-              </Form.Item>
-            </div>
-            <Form.Item className=''>
+            <Form.Item className='flex justify-center'>
               <Button
                 htmlType="submit"
-                className=""
                 disabled={loading}
+                className='bg-[#FFB800] text-black w-[200px] h-[40px] rounded-[20px] hover:text-[#FFB800] hover:bg-[#00000000]'
               >
                 {!loading ? 'Submit' : <Spin indicator={antIcon} />}
               </Button>

@@ -1,7 +1,7 @@
 export const preferActivities = [
-    { title: 'Investment Seminar', value: 'investment-seminar' },
-    { title: 'Financial Certification Training', value: 'financial-certification-training' },
-    { title: 'Offline Networking Event', value: 'offline-networking-event' },
+    { label: 'Investment Seminar', value: 'investment-seminar' },
+    { label: 'Financial Certification Training', value: 'financial-certification-training' },
+    { label: 'Offline Networking Event', value: 'offline-networking-event' },
 ]
 export const major = [
     { title: 'Finance', value: 'finance' },
