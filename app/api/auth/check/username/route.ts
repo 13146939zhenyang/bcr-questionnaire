@@ -15,8 +15,6 @@ export async function GET(request: Request) {
                 (val) => typeof val === "string" && val.includes(username as string)
             )
     );
-    console.log(isContained)
-    console.log(username)
     if (isContained) {
         return NextResponse.json({
             status: 200,

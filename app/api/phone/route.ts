@@ -3,7 +3,6 @@ import { NEXT_TWILIO_AUTH_TOKEN, NEXT_TWILIO_SID, NEXT_TWILIO_MESSAGE_SERVICE_SI
 
 export async function POST(req: NextRequest) {
   const user = await req.json()
-  console.log(user)
   const { phone, code } = user
   const accountSid = NEXT_TWILIO_SID;
   const authToken = NEXT_TWILIO_AUTH_TOKEN;

@@ -3,7 +3,6 @@ import { client } from "@/utils/client";
 
 export async function POST(req: NextRequest) {
     const questionaire = await req.json()
-    console.log(questionaire)
     const data = await client.create(questionaire).then((res) => {
         console.log(`Questionaire was created, document ID is ${res._id}`)
     }).catch((err) => {
