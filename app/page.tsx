@@ -174,7 +174,7 @@ const Landing = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           form={form}
-          className="w-[800px] mx-2 p-10 rounded-xl shadow-xl bg-[#070B10] backdrop-blur-sm backdrop-filter bg-opacity-40 text-white"
+          className="w-[800px] mx-2 px-2 py-5 rounded-xl shadow-xl bg-[#070B10] backdrop-blur-sm backdrop-filter bg-opacity-40 text-white"
         >
           <div className=''>
             <div className='mb-5'>
