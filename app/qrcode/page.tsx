@@ -1,13 +1,13 @@
 'use client'
 import React from 'react'
 import { QRCode } from 'antd'
-import { LogoWhite } from '@/public'
+import { Logo } from '@/public'
 
 const Qrcode = () => {
   const text = 'https://bcr-questionnaire.vercel.app/'
   return (
-    <div>
-      <QRCode value={text || '-'} icon={LogoWhite.src} size={300}
+    <div className='bg-white'>
+      <QRCode value={text || '-'} icon={Logo.src} size={300}
         iconSize={300 / 4} />
     </div>
   )
