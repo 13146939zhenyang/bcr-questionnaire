@@ -20,10 +20,14 @@ export default function RootLayout({
         style={{ backgroundImage: `url(${Background.src})` }}>
         <main
           // className='bg-[#070B10] bg-opacity-30 backdrop-filter backdrop-blur-md shadow-2xl w-full h-full flex justify-center items-center overflow-scroll py-4'
-          className='flex justify-center items-center overflow-scroll w-full h-full'
+          className='w-full h-full overflow-scroll'
         >
-          {children}
-        </main></body>
+          <div className='flex justify-center items-center h-[920px]'>
+            {children}
+          </div>
+
+        </main>
+      </body>
     </html>
   )
 }
