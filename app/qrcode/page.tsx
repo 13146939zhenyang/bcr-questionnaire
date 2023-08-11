@@ -12,5 +12,4 @@ const Qrcode = () => {
     </div>
   )
 }
-
 export default Qrcode
