@@ -14,7 +14,7 @@ export const sendVerificationCode = async (
             code: code.toString(),
         };
         const { data } = await axios.post(
-            `${BASE_URL}/api/auth/verify/phone`,
+            `${BASE_URL}/api/phone`,
             content
         );
         return data;

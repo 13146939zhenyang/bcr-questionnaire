@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { NEXT_TWILIO_AUTH_TOKEN, NEXT_TWILIO_SID, NEXT_TWILIO_MESSAGE_SERVICE_SID } from "@/utils/path";
 
-export async function POST(req: { body: any; }) {
+export async function POST(req: NextRequest) {
     const user = req.body;
     const { phone, code } = user;
     const accountSid = NEXT_TWILIO_SID;
@@ -14,11 +14,13 @@ export async function POST(req: { body: any; }) {
             messagingServiceSid: NEXT_TWILIO_MESSAGE_SERVICE_SID,
             to: phone
         })
-        .then((message: { sid: any; }) => NextResponse.json({ status: 200, message: "SMS sent", data: { send: true } }))
-        .catch((error: any) =>
-            NextResponse.json({
+        .then((message: { sid: any; }) => { return NextResponse.json({ status: 200, message: "SMS sent", data: { send: true } }) })
+        .catch((error: any) => {
+            return NextResponse.json({
                 status: 200,
                 message: "Error sending email",
                 data: { sent: false },
-            }));
+            })
+        }
+        );
 }

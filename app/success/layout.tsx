@@ -1,4 +1,3 @@
-import './globals.css'
 import type { Metadata } from 'next'
 import { Background, Logo } from '@/public'
 
@@ -19,8 +18,8 @@ export default function RootLayout({
       <body className='w-screen h-screen bg-cover bg-no-repeat bg-center'
         style={{ backgroundImage: `url(${Background.src})` }}>
         <main
-          // className='bg-[#070B10] bg-opacity-30 backdrop-filter backdrop-blur-md shadow-2xl w-full h-full flex justify-center items-center overflow-scroll py-4'
-          className='flex justify-center items-center overflow-scroll py-4 h-full'
+          className='bg-[#070B10] bg-opacity-30 backdrop-filter backdrop-blur-md shadow-2xl w-full h-full flex justify-center items-center overflow-scroll py-4'
+        // className='flex justify-center items-center overflow-scroll py-4'
         >
           {children}
         </main></body>

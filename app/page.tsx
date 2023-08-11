@@ -11,6 +11,7 @@ import { LogoWhite } from '../public'
 import type { RadioChangeEvent } from 'antd';
 import { preferActivities, major, experience } from '@/utils/questions'
 import { useRouter } from 'next/navigation';
+import { v4 } from 'uuid'
 import { motion } from 'framer-motion'
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin rev={undefined} />;
@@ -33,10 +34,37 @@ const Landing = () => {
   const [haveExperience, setHaveExperience] = useState<boolean>(false)
   const [selectedExperience, setSelectedExperience] = useState<string>()
   const [selectedActivities, setSelectedActivities] = useState<string[]>([])
+  const [inputMajor, setInputMajor] = useState<string>('')
+  const [inputExperience, setInputExperience] = useState<string>('')
 
   // function submitForm
   const onFinish = async (values: any) => {
     setLoading(true)
+    // console.log('Success:', values);
+    let phone = values.username
+    if (phone?.length === 9) {
+      phone = `0${phone}`
+    }
+    const data = {
+      _type: 'bcrLanding',
+      _id: v4(),
+      name: values.name,
+      phone: phone,
+      email: values.email,
+      preferActivities: values.activities,
+      major: selectedMajor === 'other' && inputMajor ? inputMajor : selectedMajor,
+      experience: haveExperience === false ? 'Have no experience' : haveExperience === true && selectedExperience === 'other' && inputExperience ? inputExperience : selectedExperience,
+    }
+    try {
+      const res = await axios.post(`${BASE_URL}/api/auth`, data)
+      if (res.data.success) {
+        message.success('Register successfully!')
+        router.push('/success')
+      }
+    } catch (err) {
+      console.log(err)
+    }
+    setLoading(false)
   }
   const onFinishFailed = () => {
     message.warning('Please fill in the form!')
@@ -100,8 +128,14 @@ const Landing = () => {
   };
 
   const onChangeActivities = (checkedValues: CheckboxValueType[]) => {
-    console.log('checked = ', checkedValues);
+    setSelectedActivities(checkedValues as string[])
   };
+  useEffect(() => {
+    if (haveExperience === false) {
+      setSelectedExperience('stock')
+      setInputExperience('')
+    }
+  }, [haveExperience])
 
   return (
     <>
@@ -140,7 +174,7 @@ const Landing = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           form={form}
-          className="w-[800px] mx-2 p-10 rounded-xl shadow-xl bg-[#070B10] backdrop-blur-sm backdrop-filter bg-opacity-40 text-white "
+          className="w-[800px] mx-2 p-10 rounded-xl shadow-xl bg-[#070B10] backdrop-blur-sm backdrop-filter bg-opacity-40 text-white"
         >
           <div className=''>
             <div className='mb-5'>
@@ -206,7 +240,7 @@ const Landing = () => {
                 <span>Phone</span>
               </div>
               <div className='flex flex-col gap-2 mb-2'>
-                <div className='relative'>
+                <div className='relative mb-4'>
                   <Form.Item
                     name="username"
                     required
@@ -241,8 +275,8 @@ const Landing = () => {
                       value={username}
                     />
                   </Form.Item>
-                  {username && isUsernameAvailable !== null && isUsernameAvailable === false && <div className='absolute bottom-0 text-red-500'>Phone has been registered</div>}
-                  {username && isUsernameAvailable !== null && isUsernameAvailable === true && <div className='absolute bottom-0 text-green-500'>Phone is available</div>}
+                  {username && isUsernameAvailable !== null && isUsernameAvailable === false && <div className='absolute top-[35px] text-red-500'>Phone has been registered</div>}
+                  {username && isUsernameAvailable !== null && isUsernameAvailable === true && <div className='absolute top-[35px] text-green-500'>Phone is available</div>}
                 </div>
                 <div className='shadow-text'>Verification Code</div>
                 <Form.Item
@@ -254,7 +288,7 @@ const Landing = () => {
                     addonAfter={
                       <button
                         disabled={buttonLoading}
-                        className=''
+                        className='w-[100px]'
                         onClick={isUsernameAvailable === true ?
                           (e) => { e.preventDefault(); handleSendVerficationCode() }
                           :
@@ -279,7 +313,7 @@ const Landing = () => {
                   {major.map((item, index) => (
                     <Radio key={index} value={item.value} className='text-white'>
                       {item.title}
-                      <>{selectedMajor === 'other' && item.value ==='other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
+                      <>{selectedMajor === 'other' && item.value === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} onChange={(e) => setInputMajor(e.target.value)} /> : null}</>
                     </Radio>
                   ))}
                 </Radio.Group>
@@ -297,12 +331,12 @@ const Landing = () => {
                   <Radio value={false} className='text-white'>
                     No
                   </Radio>
-                  {haveExperience === true ? (
+                  {haveExperience ? (
                     <Form.Item name='experienceDetail' required className='' rules={[{ required: true, message: 'Please input!' }]}>
                       <Radio.Group onChange={onChangeExperience} value={selectedExperience}>
                         {experience.map((item, index) => (
                           <Radio key={index} value={item.value} className='text-white'>
-                            {item.title}<>{selectedExperience === 'other' && item.value==='other' ? <Input style={{ width: 100, marginLeft: 10 }} /> : null}</>
+                            {item.title}<>{selectedExperience === 'other' && item.value === 'other' ? <Input style={{ width: 100, marginLeft: 10 }} onChange={(e) => setInputExperience(e.target.value)} /> : null}</>
                           </Radio>
                         ))}
                       </Radio.Group>
